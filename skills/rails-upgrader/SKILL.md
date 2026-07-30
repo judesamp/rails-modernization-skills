@@ -17,9 +17,11 @@ upgrading without them is how migrations turn into outages.
 1. **Current and target versions.** Read `Gemfile.lock` (the `rails` line under
    `specs`) and `.ruby-version`. Do not trust the `Gemfile` constraint alone.
 2. **Test coverage.** Run the suite and get a real number. **Below roughly 60%,
-   stop and say so.** Coverage is the only thing standing between an upgrade and
-   a silent behaviour change. Recommending coverage work first is a legitimate
-   outcome of running this skill.
+   stop and say so** — the correct next step is
+   [`test-coverage-writer`](../test-coverage-writer/SKILL.md), concentrated on
+   the code this upgrade will touch. Coverage is the only thing standing between
+   an upgrade and a silent behaviour change. Recommending coverage work first is
+   a legitimate outcome of running this skill.
 3. **The real blocker.** Applications are rarely pinned by Rails itself. Check
    for: a JavaScript runtime tied to Sprockets, template languages with no
    maintained successor (Haml variants, Slim forks), gems abandoned before the

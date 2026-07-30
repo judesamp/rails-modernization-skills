@@ -54,6 +54,18 @@ instead of an outage.
 If you are choosing between "start the migration now" and "get coverage up
 first", get coverage up first. Always.
 
+Two details that made this work, both in
+[`test-coverage-writer`](skills/test-coverage-writer/SKILL.md):
+
+**Coverage was concentrated, not uniform.** The goal was never a percentage. It
+was being able to tell whether a specific upcoming change broke something, which
+means covering the migration path heavily and admin tooling not at all.
+
+**Every test was proven to fail.** A test that passes against broken code is
+worse than no test, because it produces false confidence exactly when you need
+real confidence. Break the code, watch the test fail, restore it. It is the
+highest-value habit in the whole toolkit and the one most often skipped.
+
 ### 3. Automate the work, then automate the verification
 
 Machine conversion is the easy half. The hard half is knowing whether 4,600
@@ -75,8 +87,11 @@ and one that produces a long tail of mystery bugs for a year.
 
 ## The skills
 
+Listed in the order you would actually run them.
+
 | Skill | What it does |
 |---|---|
+| [`test-coverage-writer`](skills/test-coverage-writer/SKILL.md) | **Start here.** Builds the safety net before anything risky happens — characterization tests concentrated on the migration path, not a uniform coverage number. The other skills stop and point back at this one when coverage is too low. |
 | [`rails-upgrader`](skills/rails-upgrader/SKILL.md) | Walks a Rails app one minor version at a time, using `app:update` and the framework defaults mechanism rather than a big-bang jump. |
 | [`ruby-upgrader`](skills/ruby-upgrader/SKILL.md) | Ruby version upgrades, with particular attention to the Ruby 3.0 keyword-argument separation, which is where most of the real work lives. |
 | [`dependency-security-fixer`](skills/dependency-security-fixer/SKILL.md) | Triages and remediates dependency vulnerability alerts in bulk, grouping by root cause instead of working the list top to bottom. |

@@ -18,9 +18,10 @@ far to take it.
 
 **Test coverage.** No human reviews 4,600 diffs. The suite is the only thing that
 will catch a behaviour change. **Below roughly 70% on the affected code, stop and
-say so** — the correct next step is coverage work, not conversion. This is not
-caution for its own sake; it is the single decision that most determines whether
-this goes well.
+say so** — the correct next step is
+[`test-coverage-writer`](../test-coverage-writer/SKILL.md), aimed at the UI paths
+these assets drive, not conversion. This is not caution for its own sake; it is
+the single decision that most determines whether this goes well.
 
 **A green baseline.** Record the current pass count. You cannot tell what you
 broke without knowing what already failed.
