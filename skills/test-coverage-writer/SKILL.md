@@ -17,6 +17,40 @@ Usually run because [`rails-upgrader`](../rails-upgrader/SKILL.md) or
 [`legacy-asset-converter`](../legacy-asset-converter/SKILL.md) stopped and asked
 for coverage first.
 
+## The hard constraint
+
+**Do not modify application code. At all.**
+
+Not to fix a bug. Not to make something easier to test. Not to rename a
+confusing variable while you are in there. No changes under `app/`, `lib/`, or
+`config/` beyond the SimpleCov setup.
+
+This is the single most important rule in this skill, and it is not stylistic.
+The entire value of a safety net is that it was built against the code *as it
+exists*. If the code changes while the net is being built, you can no longer
+tell whether a later failure came from the migration or from something done
+during coverage work — which defeats the reason for doing any of this.
+
+It also protects against a specific failure mode: touching business logic while
+holding a partial understanding of it. You are writing tests precisely because
+nobody currently knows what this code does. That is the worst possible moment to
+change it.
+
+**Verify before finishing:**
+
+```bash
+git diff --name-only
+```
+
+Everything should be under `test/` or `spec/`, plus `docs/known-bugs.md` and the
+SimpleCov configuration. **Any application file in that list is a violation** —
+revert it and log the intended change instead.
+
+If a piece of code genuinely cannot be tested without modification — a hard-coded
+dependency, an untestable singleton — **stop and report it** rather than
+refactoring for testability. That is a real finding and a decision for a human,
+not a licence to change the code.
+
 ## Step 0 — establish what change is coming
 
 Ask, or infer from context. The answer determines everything:
@@ -189,10 +223,12 @@ Coverage decays. Before finishing:
 
 ## Rules
 
-- **Never refactor while adding coverage.** The net and the thing it catches must
-  not move together.
+- **Never modify application code.** See the hard constraint above. Verify with
+  `git diff --name-only` before finishing.
 - **Never fix a bug you discover.** Write the correct test, skip it with a
   message naming the defect, log it, move on.
+- **Never refactor for testability.** If code cannot be tested as written, that
+  is a finding to report, not a change to make.
 - **Never leave a vague skip message.** A skip is only useful if it says what is
   broken and where the detail lives. Vague skips are how a suite rots.
 - **Never chase a percentage.** Concentrated coverage on the migration path beats
