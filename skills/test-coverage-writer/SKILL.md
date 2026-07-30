@@ -83,23 +83,68 @@ scheduled for deletion, and code the migration will not reach. Say what you are
 skipping and why — leaving it uncovered on purpose is a decision, not an
 oversight.
 
-## Step 3 — characterize, do not specify
+## Step 3 — capture behaviour, and never fix bugs here
 
-This is the crucial distinction for legacy code, and it is where people go wrong.
+You are building a net, not improving the codebase. **Do not fix any bug you
+find during coverage work.** Fixing means the safety net and the thing it
+protects change at the same time, and you lose the ability to attribute any
+later failure to either.
 
-You are writing **characterization tests**: they capture what the code
-*currently does*, so a change that alters behaviour fails loudly. They are not
-specifications of what it *should* do.
+But you will find bugs — coverage work on legacy code always does. Handle them
+like this:
 
-When you find behaviour that looks like a bug:
+### When the correct behaviour is clear
 
-- **Write the test asserting the buggy behaviour.**
-- Add a comment saying you believe it is wrong.
-- **Report it. Do not fix it.**
+**Write the test asserting the behaviour you believe is correct, then skip it,
+then log it.**
 
-Fixing bugs during coverage work means your safety net and the thing it is
-protecting change at once, and you lose the ability to attribute any later
-failure. Capture now; fix in a separate change, afterwards.
+```ruby
+test "returns zero for an account with no transactions" do
+  skip "KNOWN BUG #7 — returns nil, not 0. See docs/known-bugs.md"
+
+  assert_equal 0, account.balance
+end
+```
+
+This is better than asserting the broken behaviour, because the test is already
+written correctly for the day someone fixes it — they delete one line. Asserting
+the bug means the eventual fix has to remember to invert a passing test, which
+nobody does.
+
+It also makes the suite itself the to-do list. A skipped test with a specific,
+honest message is a durable marker that survives sprint boards and personnel
+changes.
+
+**The skip message must name the actual defect and point at the log.**
+`skip "broken"` is worthless; the message is the entire value.
+
+### When the correct behaviour is not clear
+
+Sometimes you cannot tell whether something is a bug or load-bearing weirdness
+somebody depends on. Then write a **characterization test**: assert what the code
+currently does, comment that the behaviour is suspect and why, and log it as a
+question rather than a defect. It still protects you during migration, which is
+the job.
+
+### Keep the log outside the test suite
+
+Maintain a markdown file — `docs/known-bugs.md` — with an entry per finding:
+
+```markdown
+## 7. Account#balance returns nil for accounts with no transactions
+
+- **Found:** while covering app/models/account.rb
+- **Expected:** 0
+- **Actual:** nil
+- **Blast radius:** 4 call sites, 2 of them in the payments path
+- **Test:** test/models/account_test.rb, skipped
+- **Fix:** not attempted — coverage work only
+```
+
+Two reasons this matters more than it looks. It gives the team a triage queue
+that outlives the migration. And **it is frequently the most valuable artifact
+the whole exercise produces** — a catalogue of real defects nobody knew about,
+each with a test already written and waiting.
 
 ## Step 4 — test at the level with the best coverage-per-effort
 
@@ -146,7 +191,10 @@ Coverage decays. Before finishing:
 
 - **Never refactor while adding coverage.** The net and the thing it catches must
   not move together.
-- **Never fix a bug you discover.** Characterize it, report it, move on.
+- **Never fix a bug you discover.** Write the correct test, skip it with a
+  message naming the defect, log it, move on.
+- **Never leave a vague skip message.** A skip is only useful if it says what is
+  broken and where the detail lives. Vague skips are how a suite rots.
 - **Never chase a percentage.** Concentrated coverage on the migration path beats
   a uniform number.
 - **Never trust a test you have not seen fail.**
@@ -159,5 +207,6 @@ Coverage decays. Before finishing:
 Report: starting coverage overall and for the files that matter, how much
 existing coverage is real versus hollow, what you prioritized and what you
 deliberately skipped, tests added by level, every test verified to fail
-correctly, **bugs found and characterized but not fixed** (this list is often the
-most valuable output), and the thresholds now enforced in CI.
+correctly, the thresholds now enforced in CI, and — **usually the most valuable
+output** — `docs/known-bugs.md`, with a count of defects found, how many have a
+skipped test waiting, and which sit on critical paths.
