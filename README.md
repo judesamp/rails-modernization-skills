@@ -130,6 +130,14 @@ Run them on a branch. Read the diffs. Keep the test suite green between steps.
 
 ---
 
+## Consulting
+
+I take on Rails modernization work — version upgrades, dependency security
+remediation, and legacy asset migration — including subcontract and overflow
+engagements for agencies.
+
+judesamp@gmail.com · [linkedin.com/in/jeremysamples](https://linkedin.com/in/jeremysamples)
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
