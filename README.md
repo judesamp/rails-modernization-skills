@@ -112,6 +112,7 @@ Listed in the order you would actually run them.
 | [`dependency-security-fixer`](skills/dependency-security-fixer/SKILL.md) | Triages and remediates dependency vulnerability alerts in bulk, grouping by root cause instead of working the list top to bottom. |
 | [`legacy-asset-converter`](skills/legacy-asset-converter/SKILL.md) | Converts CoffeeScript to ES6 and legacy template languages to modern equivalents, in reviewable batches. |
 | [`conversion-auditor`](skills/conversion-auditor/SKILL.md) | Independently reviews machine-converted files for silent behaviour changes. Run after any bulk conversion. |
+| [`index-auditor`](skills/index-auditor/SKILL.md) | Independent of the upgrade sequence. Finds missing and unused database indexes from foreign keys, query patterns and Postgres statistics — and requires evidence plus a before/after `EXPLAIN` for every recommendation, because adding indexes blindly is its own performance problem. |
 
 ---
 
