@@ -92,7 +92,10 @@ Doing both at once means a failure could be either, and you cannot tell which.
 
 ### Step 5 — get green, then clear deprecations one at a time
 
-Run the suite and fix the failures.
+Run the suite. If it is badly red, use
+[`upgrade-failure-triage`](../upgrade-failure-triage/SKILL.md) rather than
+working through failures individually — post-upgrade failures cluster, and two
+hundred of them are usually four or five root causes.
 
 Then deprecations, which matter more than they look: **they are the next rung's
 breaking changes, arriving early with a free warning attached.** Clearing them

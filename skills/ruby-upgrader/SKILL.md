@@ -90,7 +90,9 @@ and the gems extracted from the standard library in 3.4.
 3. **Reinstall and resolve.** Native extension gems frequently need newer
    versions for newer Rubies; `nokogiri`, `pg`, `ffi`, and `bcrypt` are the
    usual suspects.
-4. **Run the suite with deprecations visible.**
+4. **Run the suite with deprecations visible.** If it comes back badly red, use
+   [`upgrade-failure-triage`](../upgrade-failure-triage/SKILL.md) — group the
+   failures by signature before fixing any of them.
 5. **Fix, commit, move to the next rung.**
 
 ## Rules
