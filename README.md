@@ -31,7 +31,7 @@ happen because AI wrote the code. It happened because the work was turned into
 
 ## The method
 
-The skills matter less than the sequence they run in. Four ideas do most of the
+The skills matter less than the sequence they run in. Five ideas do most of the
 work.
 
 ### 1. Find what is actually pinning you
