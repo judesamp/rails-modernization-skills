@@ -34,11 +34,32 @@ upgrading without them is how migrations turn into outages.
 
 For each version in the path, in order. Never batch two rungs.
 
-### Step 1 — read the release notes
+### Step 1 — fetch the actual upgrade guide
 
-Fetch the official upgrade guide for the target version and list the breaking
-changes that actually apply to this codebase. Not all of them; the ones with
-matching call sites. Search the code to confirm each.
+**Retrieve the official guide. Do not work from recollection.** Version-specific
+breaking changes are precisely the kind of detail a model reproduces
+confidently and incorrectly, and a wrong list is worse than no list because it
+sends you looking for problems that do not exist while missing ones that do.
+
+Primary source, which has a section per version pair:
+
+```
+https://guides.rubyonrails.org/upgrading_ruby_on_rails.html
+```
+
+Also worth pulling for the target version: the release notes guide
+(`https://guides.rubyonrails.org/X_Y_release_notes.html`) and, when a change is
+ambiguous, the CHANGELOG in the relevant Rails component.
+
+Then narrow it to this codebase:
+
+1. Extract the changes for **this rung only**. Ignore everything for later
+   versions — you will read those guides when you get there.
+2. For each change, **grep for the affected API** to confirm it actually applies.
+   Most of any guide is irrelevant to any given application.
+3. Produce a written checklist of the ones that survive.
+4. **Work the checklist one item at a time**, running the suite after each. Do
+   not batch them — when something breaks you want one candidate cause.
 
 ### Step 2 — bump the constraint
 
@@ -69,11 +90,38 @@ This is the single most useful property of the Rails upgrade mechanism: it lets
 you separate "running on the new version" from "adopting the new behaviour".
 Doing both at once means a failure could be either, and you cannot tell which.
 
-### Step 5 — get green
+### Step 5 — get green, then clear deprecations one at a time
 
-Run the suite. Fix failures. Work through deprecation warnings now rather than
-later — they are next version's breaking changes, and they are cheapest to fix
-while you are already in this code.
+Run the suite and fix the failures.
+
+Then deprecations, which matter more than they look: **they are the next rung's
+breaking changes, arriving early with a free warning attached.** Clearing them
+now is far cheaper than meeting them as errors two versions later, and you are
+already in this code.
+
+Read them from the logs rather than from scrollback, and **deduplicate before
+fixing anything** — one deprecated call in a shared helper produces hundreds of
+identical lines and makes the problem look far larger than it is:
+
+```bash
+grep "DEPRECATION WARNING" log/test.log | sort | uniq -c | sort -rn
+```
+
+That gives you a ranked list of **distinct messages**. Work it one message at a
+time, re-running the suite after each. Fix by message, not by occurrence: one
+message is one change applied everywhere it appears — the same fix-the-class-not-
+the-instance discipline the rest of this toolkit uses.
+
+To make them impossible to ignore, promote them to failures for the duration of
+the upgrade:
+
+```ruby
+# config/environments/test.rb
+config.active_support.deprecation = :raise
+```
+
+Aggressive, and the fastest route to zero. Revert it afterwards if the noise
+during normal development is unwelcome.
 
 Commit here. This is a working state worth having.
 

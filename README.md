@@ -76,7 +76,21 @@ the transformation; `conversion-auditor` independently reviews the output and
 reports what looks wrong. Generation and verification must be separate passes,
 because a tool that checks its own work grades its own homework.
 
-### 4. Fix the class, not the instance
+### 4. Work from the guide, not from memory
+
+Every upgrade skill here fetches the official upgrade guide or release notes
+before doing anything. That instruction is deliberate and it is aimed at the
+model: version-specific breaking changes are exactly the detail an LLM
+reproduces confidently and incorrectly, and a wrong checklist is worse than none
+— it sends you hunting for problems that do not exist while missing the ones
+that do.
+
+Same discipline for deprecation warnings. Read them from the logs, deduplicate
+them, and work the distinct messages one at a time. A single offending call in a
+shared helper emits hundreds of identical lines; the raw count makes a small job
+look enormous.
+
+### 5. Fix the class, not the instance
 
 When a defect surfaced, we did not just fix it. We searched the whole fleet for
 the same pattern and fixed every occurrence. One bug found by hand becomes

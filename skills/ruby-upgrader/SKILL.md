@@ -30,8 +30,16 @@ Ruby 2.7 warns about exactly the code 3.0 breaks. This makes it a free
 correctness pass, and it is the reason not to jump straight to 3.x.
 
 ```bash
-RUBYOPT="-W:deprecated" bundle exec rails test 2>&1 | grep -i "keyword"
+RUBYOPT="-W:deprecated" bundle exec rails test 2>&1 \
+  | grep -i "keyword" | sort | uniq -c | sort -rn
 ```
+
+**Deduplicate before fixing.** A single offending call in a shared helper emits
+the same warning hundreds of times; the raw output makes the job look far bigger
+than it is. The distinct-message count is the real backlog, and it is usually
+small.
+
+Work one message at a time, re-running after each.
 
 Fix every warning on 2.7 before going to 3.0. **A clean 2.7 deprecation run is
 the gate.** Do not proceed while any remain — each one is a production
@@ -57,6 +65,19 @@ small, though check `Psych` 4 (`YAML.safe_load` became the default and
 and the gems extracted from the standard library in 3.4.
 
 ## Procedure per rung
+
+0. **Fetch the release notes for the target version. Do not work from
+   recollection** — which Ruby release changed what is exactly the detail a
+   model reproduces confidently and wrongly.
+
+   ```
+   https://www.ruby-lang.org/en/news/          # release announcements
+   https://github.com/ruby/ruby/blob/master/NEWS.md
+   ```
+
+   Extract the incompatibilities for this rung only, grep for each to see
+   whether it applies here, and work the survivors **one at a time** with the
+   suite green between each.
 
 1. **Confirm the target is supported.** Check the Rails version's compatible
    Ruby range before choosing a target. Rails 6.1 and Ruby 3.2 is not a
