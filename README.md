@@ -37,12 +37,13 @@ work.
 ### 1. Find what is actually pinning you
 
 Legacy Rails applications are rarely stuck on Rails. They are stuck on something
-Rails depends on. In our case 4,600 CoffeeScript and Hamlc files pinned the asset
-pipeline, and the asset pipeline pinned Rails. No amount of `bundle update` was
-ever going to move that.
+Rails depends on. In our estate the front-end application had 4,600 CoffeeScript
+and Hamlc files pinning its asset pipeline, and the asset pipeline pinned Rails —
+which in turn blocked the security remediation the organization had made a
+priority. No amount of `bundle update` was ever going to move that.
 
-Spend the first week identifying the true blocker. Upgrading around it wastes
-months.
+Spend the first week identifying the true blocker, per application. Upgrading
+around it wastes months, and the blocker is rarely the same twice.
 
 ### 2. Build the safety net before you need it
 
