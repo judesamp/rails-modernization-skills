@@ -1,6 +1,6 @@
 ---
 name: test-coverage-writer
-description: Raise test coverage on a legacy codebase ahead of a risky change — an upgrade, a bulk conversion, or a large refactor. Use when coverage is too low to migrate safely, when the user needs a safety net before touching a lot of code, or when another skill has stopped and asked for coverage work first.
+description: Builds a concentrated safety net of tests on legacy Rails code before a risky change (an upgrade, a bulk conversion, a large refactor) without modifying application code, proving each test can fail and logging bugs it finds instead of fixing them. Use when coverage is too low to migrate safely, when the user needs a safety net before touching a lot of code, or when another skill has stopped and asked for coverage work first.
 ---
 
 # Test Coverage Writer

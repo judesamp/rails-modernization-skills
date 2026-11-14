@@ -4,16 +4,17 @@ A set of [Claude Code](https://claude.com/claude-code) skills for dragging legac
 Rails applications forward: major-version upgrades, Ruby version jumps, security
 alert remediation, and legacy asset conversion.
 
-They exist because I used an in-house version of them to modernize a
-21-application Ruby estate in under six months, with a two-developer team. This
-repository is a clean-room reimplementation of that toolkit — same ideas,
-written fresh and generic, with no employer-specific code.
+They are an open-source example of the method I used to lead a 21-application
+Rails estate from end-of-life versions to current Rails in under six months. I
+built that program's tooling and did nearly all of the hands-on work. This
+repository is not that tooling: it is the same method, written fresh and
+generic, with no employer-specific code.
 
 ---
 
 ## What the approach actually achieved
 
-Across 21 applications, in under six months, with two developers:
+Across 21 applications, in under six months, with a two-person team:
 
 | | |
 |---|---|
@@ -107,7 +108,7 @@ Listed in the order you would actually run them.
 | Skill | What it does |
 |---|---|
 | [`test-coverage-writer`](skills/test-coverage-writer/SKILL.md) | **Start here.** Builds the safety net before anything risky happens — characterization tests concentrated on the migration path, not a uniform coverage number. The other skills stop and point back at this one when coverage is too low. |
-| [`rails-upgrader`](skills/rails-upgrader/SKILL.md) | Walks a Rails app one minor version at a time, using `app:update` and the framework defaults mechanism rather than a big-bang jump. |
+| [`rails-upgrader`](skills/rails-upgrader/SKILL.md) | Walks a Rails app one minor version at a time in a fixed order: Ruby first if needed, prep on the current version, bump, `app:update`, green suite, deprecations, then framework defaults one at a time. A preflight script reads the app and prints the steps to the target. |
 | [`ruby-upgrader`](skills/ruby-upgrader/SKILL.md) | Ruby version upgrades, with particular attention to the Ruby 3.0 keyword-argument separation, which is where most of the real work lives. |
 | [`upgrade-failure-triage`](skills/upgrade-failure-triage/SKILL.md) | For when the suite goes red after a version bump. Groups failures by signature before fixing any of them, and enforces the rule that you may only change a test if you can say why the behaviour is still correct. |
 | [`dependency-security-fixer`](skills/dependency-security-fixer/SKILL.md) | Triages and remediates dependency vulnerability alerts in bulk, grouping by root cause instead of working the list top to bottom. |
@@ -119,19 +120,38 @@ Listed in the order you would actually run them.
 
 ## Installing
 
-Copy the skills you want into your project or personal skills directory:
+As a Claude Code plugin (all eight skills, kept up to date):
 
 ```bash
-# project-scoped
-mkdir -p .claude/skills
-cp -r skills/rails-upgrader .claude/skills/
-
-# or available everywhere
-cp -r skills/rails-upgrader ~/.claude/skills/
+/plugin marketplace add judesamp/rails-modernization-skills
+/plugin install rails-modernization@rails-modernization-skills
 ```
 
-Claude Code discovers them automatically. Invoke by name (`/rails-upgrader`) or
-just describe the task and let the description match.
+The skills are then available as `/rails-modernization:rails-upgrader` and so
+on, and Claude picks them up from their descriptions when you describe the task.
+
+Or copy single skills into your project or personal skills directory:
+
+```bash
+cp -r skills/rails-upgrader .claude/skills/      # this project
+cp -r skills/rails-upgrader ~/.claude/skills/    # everywhere
+```
+
+Several skills bundle small Ruby scripts (preflight, deprecation and failure
+grouping) under `scripts/`. They use only the standard library and run on
+Ruby 2.4 and later, so they work inside the old applications they are for.
+
+### Bringing your own per-version notes
+
+`rails-upgrader` and `ruby-upgrader` fetch the official upgrade guide for each
+step. If you keep your own notes per version step, point the skills at them and
+they will load the file for the current step instead:
+
+```
+$RAILS_UPGRADE_PLAYBOOK            (default: ~/.claude/rails-upgrade-playbook)
+├── steps/rails-7.1-to-7.2.md      one file per Rails step
+└── ruby/compatibility.md          which Ruby each Rails version supports
+```
 
 ---
 
@@ -147,13 +167,11 @@ Run them on a branch. Read the diffs. Keep the test suite green between steps.
 
 ---
 
-## Consulting
+## Getting help
 
-I take on Rails modernization work — version upgrades, dependency security
-remediation, and legacy asset migration — including subcontract and overflow
-engagements for agencies.
-
-judesamp@gmail.com · [linkedin.com/in/jeremysamples](https://linkedin.com/in/jeremysamples)
+I run [Heartwood Software](https://heartwoodsoftware.com), which does Rails
+upgrades with this method: a fixed-price assessment first, then fixed-quote
+upgrades one minor version at a time.
 
 ## License
 

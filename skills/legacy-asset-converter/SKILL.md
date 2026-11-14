@@ -1,6 +1,6 @@
 ---
 name: legacy-asset-converter
-description: Convert legacy front-end assets to modern equivalents at scale — CoffeeScript to ES6, legacy template languages to maintained ones. Use when the user has CoffeeScript, Haml variants, or other legacy asset formats blocking a Rails or asset pipeline upgrade, or asks how to convert thousands of files safely.
+description: Converts legacy front-end assets at scale (CoffeeScript to ES6, Haml-coffee and other legacy templates to maintained ones) in small reviewable batches, each followed by a separate audit pass. Use when CoffeeScript, hamlc or other legacy asset formats block a Rails or asset pipeline upgrade, or when the user asks how to convert thousands of files safely.
 ---
 
 # Legacy Asset Converter
@@ -79,7 +79,9 @@ Never let two batches ride in one commit.
 
 ## Step 4 — audit the output
 
-**Run [`conversion-auditor`](../conversion-auditor/SKILL.md) on every batch.**
+**Run [`conversion-auditor`](../conversion-auditor/SKILL.md) on every batch**,
+passing the batch: `/conversion-auditor app/assets/javascripts/admin` or a
+commit range. It runs in its own subagent, without this conversation's context.
 
 This is not optional and it is not the same as the conversion pass. A tool that
 reviews its own output grades its own homework — the audit needs to be a

@@ -1,6 +1,6 @@
 ---
 name: dependency-security-fixer
-description: Triage and remediate dependency vulnerability alerts in bulk, grouping by root cause rather than working the list one by one. Use when the user has a backlog of Dependabot or security alerts, mentions CVEs in dependencies, bundle audit findings, or asks how to clear hundreds of vulnerability alerts.
+description: Triages and remediates dependency vulnerability alerts in bulk, grouping them by root cause (transitive parent, framework version, reachability) instead of working the list one by one. Use when the user has a backlog of Dependabot or security alerts, mentions CVEs in gems, bundle-audit findings, or asks how to clear hundreds of vulnerability alerts.
 ---
 
 # Dependency Security Fixer

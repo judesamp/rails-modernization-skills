@@ -1,6 +1,6 @@
 ---
 name: index-auditor
-description: Find missing and unused database indexes in a Rails application, using foreign keys, query patterns in the codebase, and Postgres statistics. Use when queries are slow, when sequential scans show up on large tables, after a schema has grown organically, or when the user asks about database indexing or N+1 and query performance.
+description: Finds missing and unused database indexes in a Rails application on Postgres from unindexed foreign keys, query patterns in the code and pg_stat statistics, and backs every recommendation with a before/after EXPLAIN. Use when queries are slow, when sequential scans show up on large tables, after a schema has grown organically, or when the user asks about database indexing or query performance.
 ---
 
 # Index Auditor

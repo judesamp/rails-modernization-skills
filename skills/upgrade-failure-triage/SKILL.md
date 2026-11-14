@@ -1,6 +1,7 @@
 ---
 name: upgrade-failure-triage
-description: Investigate and fix test failures caused by a framework or language upgrade. Use after bumping Rails or Ruby when the suite goes red, when there are many failures and it is unclear where to start, or when deciding whether a failing test indicates broken code or a test coupled to something that moved.
+description: Groups the test failures caused by a Rails or Ruby upgrade into distinct root-cause signatures, categorizes each, and fixes them one signature at a time without editing tests into passing. Use after bumping Rails or Ruby when the suite goes red, when there are many failures and it is unclear where to start, or when deciding whether a failing test means broken code or a test coupled to something that moved.
+allowed-tools: Bash(ruby ${CLAUDE_SKILL_DIR}/scripts/*)
 ---
 
 # Upgrade Failure Triage
@@ -21,16 +22,17 @@ Group first. Always.
 
 ## Step 1 — get the distinct signatures, not the failures
 
-Never read failures one by one. Extract the error signatures and count them:
+Never read failures one by one. Group them by signature:
 
 ```bash
-bin/rails test 2>&1 | grep -E "^(Failure|Error):" -A2 \
-  | grep -oE "[A-Z][A-Za-z:]*(Error|Exception)[^\\n]*" \
-  | sort | uniq -c | sort -rn
+bin/rails test 2>&1 | ruby ${CLAUDE_SKILL_DIR}/scripts/signatures.rb
+bundle exec rspec 2>&1 | ruby ${CLAUDE_SKILL_DIR}/scripts/signatures.rb
 ```
 
-Adjust to your reporter. The output you want is *"NoMethodError: undefined
-method 'update_attributes' — 47 occurrences"*, not a scrolling wall.
+It reads Minitest and RSpec output, blanks out object inspections and numbers,
+and prints each distinct signature with its count and a few example tests:
+*"47  NoMethodError: undefined method 'update_attributes' for #<...>"*, not a
+scrolling wall.
 
 **Report the distinct count before doing anything.** "212 failures, 6 distinct
 causes" reframes the work from impossible to an afternoon, and it is almost
@@ -42,8 +44,9 @@ Post-upgrade failures fall into a small number of buckets, and the bucket
 determines the fix:
 
 **Removed or renamed API.** `NoMethodError` on a framework method. The clearest
-category — the upgrade guide names it, the fix is mechanical, and it applies
-everywhere the call appears.
+category: the upgrade guide (or the step's playbook file, under "Removed or
+changed APIs") names it, the fix is mechanical, and it applies everywhere the
+call appears.
 
 **Changed default behaviour.** The nastiest. No error, just different results —
 serialization formats, timezone handling, `nil` treatment in queries, cache key

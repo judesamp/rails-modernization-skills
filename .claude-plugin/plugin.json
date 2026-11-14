@@ -1,0 +1,10 @@
+{
+  "name": "rails-modernization",
+  "description": "Skills for upgrading legacy Rails applications: Rails and Ruby version steps in a fixed order, failure triage, dependency security, legacy asset conversion with independent audit, and index auditing.",
+  "version": "2.0.0",
+  "author": { "name": "Jeremy Samples" },
+  "homepage": "https://heartwoodsoftware.com",
+  "repository": "https://github.com/judesamp/rails-modernization-skills",
+  "license": "MIT",
+  "keywords": ["rails", "ruby", "upgrade", "migration", "zeitwerk", "security"]
+}
