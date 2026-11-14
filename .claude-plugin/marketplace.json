@@ -1,0 +1,12 @@
+{
+  "name": "rails-modernization-skills",
+  "description": "Rails modernization skills by Heartwood Software",
+  "owner": { "name": "Jeremy Samples" },
+  "plugins": [
+    {
+      "name": "rails-modernization",
+      "source": "./",
+      "description": "Rails and Ruby upgrades step by step, failure triage, dependency security, legacy asset conversion and audit, index auditing."
+    }
+  ]
+}
