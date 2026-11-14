@@ -28,6 +28,16 @@ RUBY_MINIMUM = {
 }.freeze
 LADDER = RUBY_MINIMUM.keys.freeze
 
+# Newest Ruby minor that Rails' own CI hard-tests each line on; newer Rubies
+# run there only as soft-fail jobs. From max_ruby in rails/buildkite-config:
+# 2.7 for Rails < 6.1, 3.3 for Rails < 8, no cap from 8.0.
+def ruby_ceiling(rails_minor)
+  v = Gem::Version.new(rails_minor)
+  return "2.7" if v < Gem::Version.new("6.1")
+  return "3.3" if v < Gem::Version.new("8.0")
+  nil
+end
+
 def minor(version)
   version.to_s.split(".").first(2).join(".")
 end
@@ -77,6 +87,12 @@ if ruby_lock && ruby && minor(ruby_lock) != minor(ruby)
   problems << ".ruby-version and Gemfile.lock disagree; settle the Ruby version first."
 end
 
+ceiling = ruby_ceiling(minor(rails))
+if ruby && ceiling && Gem::Version.new(minor(ruby)) > Gem::Version.new(ceiling)
+  problems << "Ruby #{ruby} is newer than Rails #{minor(rails)} is tested on (up to #{ceiling}). " \
+              "Expect breakage, or move Rails first."
+end
+
 unless problems.empty?
   puts "Finish first:"
   problems.each { |p| puts "  - #{p}" }
@@ -99,7 +115,8 @@ puts "Steps to Rails #{minor(target)} (#{to - from}), in order:"
 current_ruby = ruby && Gem::Version.new(ruby)
 LADDER[from..to].each_cons(2) do |a, b|
   need = Gem::Version.new(RUBY_MINIMUM[b])
-  line = "  #{a} -> #{b}   needs Ruby >= #{RUBY_MINIMUM[b]}"
+  cap = ruby_ceiling(b)
+  line = "  #{a} -> #{b}   Ruby >= #{RUBY_MINIMUM[b]}#{cap ? ", tested up to #{cap}" : ''}"
   if current_ruby && current_ruby < need
     line += "   <- Ruby step first (on Rails #{a}, its own deploy)"
     current_ruby = need
@@ -111,5 +128,5 @@ LADDER[from..to].each_cons(2) do |a, b|
   puts line
 end
 puts
-puts "Ruby minimums are from the official upgrade guide. Check the highest Ruby the " \
-     "current Rails supports before choosing a Ruby target#{playbook ? ' (playbook: ruby/compatibility.md)' : ''}."
+puts "Minimums are from the official upgrade guide; \"tested up to\" is Rails' CI ceiling. " \
+     "Move Ruby no further than the current Rails is tested on#{playbook ? ' (playbook: ruby/compatibility.md)' : ''}."
