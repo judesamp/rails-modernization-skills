@@ -1,6 +1,8 @@
 ---
 name: conversion-auditor
-description: Independently review machine-converted or bulk-refactored files for silent behaviour changes. Use after any large automated conversion, codemod, or find-and-replace refactor, when the user needs to verify that converted output still behaves identically and the volume is too large to review by hand.
+description: Independently reviews machine-converted or bulk-refactored files for silent behaviour changes (truthiness, this-binding, scope, escaping), reporting only real differences with a codebase-wide count per pattern. Use after any large automated conversion, codemod or find-and-replace refactor, when the output is too large to review by hand.
+context: fork
+argument-hint: "[batch directory or commit range]"
 ---
 
 # Conversion Auditor
@@ -8,6 +10,14 @@ description: Independently review machine-converted or bulk-refactored files for
 Reviews the output of a bulk automated conversion for **behaviour changes**, not
 style. Run it after `legacy-asset-converter`, a codemod, a large find-and-replace,
 or any refactor touching more files than a person will actually read.
+
+## What to audit
+
+The batch under review: $ARGUMENTS
+
+This skill runs as a separate subagent with no memory of the conversion, which
+is the point. If no batch was given, audit the most recent conversion commit
+(`git log --stat -5` to find it) and say which one you chose.
 
 ## The premise
 
