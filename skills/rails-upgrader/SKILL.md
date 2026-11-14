@@ -51,7 +51,9 @@ confidently and wrongly. **Never work a step from memory.**
 - **If preflight found a playbook** (a directory of per-step files, located by
   `RAILS_UPGRADE_PLAYBOOK` or `~/.claude/rails-upgrade-playbook`), read
   `steps/rails-X.Y-to-A.B.md` for this step only. Follow its "Order of
-  operations"; use its other sections as the checklist.
+  operations"; use its other sections as the checklist. If the playbook has a
+  `bin/scan`, run it (`<playbook>/bin/scan . rails-X.Y-to-A.B`) to list where
+  the step's changes appear in this codebase.
 - **Otherwise, fetch the official sources for this step:** the section for this
   version pair in https://guides.rubyonrails.org/upgrading_ruby_on_rails.html,
   the release notes at `https://guides.rubyonrails.org/A_B_release_notes.html`,
